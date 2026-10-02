@@ -1,0 +1,81 @@
+{
+  "company": "Project Palm",
+  "sector": "Commercial landscaping and grounds maintenance",
+  "fiscalYear": 2025,
+  "revenue": 18000000,
+  "revenueHistory": [14200000, 15900000, 16800000],
+  "reportedEbitda": 2400000,
+  "recurringRevenueShare": 0.62,
+  "maintenanceCapexShare": 0.02,
+  "netDebtAtClose": 0,
+  "askMultiple": 6,
+  "customers": [
+    { "name": "Harbour Point REIT", "revenueShare": 0.21 },
+    { "name": "Westfield Industrial Park", "revenueShare": 0.12 },
+    { "name": "County school district", "revenueShare": 0.09 },
+    { "name": "Marina Village HOA", "revenueShare": 0.07 },
+    { "name": "Ridgeline Medical Campus", "revenueShare": 0.06 }
+  ],
+  "adjustments": [
+    {
+      "id": "owner-salary",
+      "label": "Owner compensation above market replacement",
+      "amount": 420000,
+      "category": "owner-compensation",
+      "documented": true,
+      "sellerRationale": "Founder draws $610k; a general manager at market is $190k. Payroll records and two recruiter benchmarks provided."
+    },
+    {
+      "id": "personal-spend",
+      "label": "Personal expenses run through the company",
+      "amount": 95000,
+      "category": "discretionary-personal",
+      "documented": false,
+      "sellerRationale": "Vehicles, travel and club memberships that will not continue post-close. Itemisation not yet provided."
+    },
+    {
+      "id": "legal-settlement",
+      "label": "One-time settlement of a 2024 employment claim",
+      "amount": 140000,
+      "category": "one-time",
+      "documented": true,
+      "sellerRationale": "Settlement agreement and legal invoices provided; matter closed."
+    },
+    {
+      "id": "yard-rent",
+      "label": "Yard leased from an owner-affiliated LLC below market",
+      "amount": -125000,
+      "category": "related-party-normalisation",
+      "documented": true,
+      "sellerRationale": "Lease is $60k per year; an independent appraisal puts market rent at $185k."
+    },
+    {
+      "id": "municipal-contract",
+      "label": "Annualised run-rate of a municipal contract signed in month 10",
+      "amount": 300000,
+      "category": "run-rate-new-contract",
+      "documented": true,
+      "sellerRationale": "Three-year signed contract; two months delivered inside the fiscal year."
+    },
+    {
+      "id": "repairs-capitalisation",
+      "label": "Change in policy capitalising fleet repairs",
+      "amount": 85000,
+      "category": "accounting-policy",
+      "documented": true,
+      "sellerRationale": "Repairs over $5k reclassified to capex from FY25."
+    },
+    {
+      "id": "route-density",
+      "label": "Route density savings available to a regional acquirer",
+      "amount": 220000,
+      "category": "pro-forma-synergy",
+      "documented": false,
+      "sellerRationale": "An acquirer with existing crews in the metro could consolidate three routes."
+    }
+  ],
+  "readerNotes": [
+    "Teaser gives no detail on crew turnover; seasonal labour is the obvious operating risk in this sector.",
+    "Harbour Point REIT contract term and renewal date are not disclosed."
+  ]
+}

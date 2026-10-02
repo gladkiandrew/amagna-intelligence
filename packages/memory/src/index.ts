@@ -1,0 +1,10 @@
+export { FrontmatterError, parseNote, serializeFrontmatter, serializeNote } from './frontmatter.js';
+export type { Frontmatter, FrontmatterValue, ParsedNote } from './frontmatter.js';
+export { formatDate, noteFromMarkdown, noteToMarkdown, parseDate } from './note.js';
+export type { Note } from './note.js';
+export { buildIndex, tokenize } from './index-build.js';
+export type { MemoryIndex } from './index-build.js';
+export { getByName, search } from './search.js';
+export type { SearchHit, SearchOptions } from './search.js';
+export { loadVault, writeNote } from './vault.js';
+export type { VaultLoadResult, WriteNoteOptions } from './vault.js';

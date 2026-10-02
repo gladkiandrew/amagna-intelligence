@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/memory" },
+    { "path": "./packages/agents" },
+    { "path": "./packages/guard" },
+    { "path": "./packages/vault-bridge" },
+    { "path": "./packages/cockpit-worker" },
+    { "path": "./examples/deal-screener" }
+  ]
+}

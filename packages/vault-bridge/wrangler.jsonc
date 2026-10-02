@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vault-bridge",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-12-30",
+  "observability": { "enabled": true },
+
+  // Non-secret config lives here so a reader can see which repository a given
+  // deployment writes to. Set your own account with `wrangler login` rather than
+  // committing an account_id.
+  "vars": {
+    "GITHUB_REPO": "your-org/your-vault",
+    "GITHUB_BRANCH": "main",
+    "NOTES_DIR": "inbox",
+  },
+
+  // Secrets are set out of band and never appear in this file:
+  //   wrangler secret put BRIDGE_TOKEN
+  //   wrangler secret put GITHUB_TOKEN      # fine-grained PAT, contents:write on GITHUB_REPO only
+  //
+  // Optional: bind a KV namespace for Idempotency-Key replay. Without it the
+  // Worker still runs; see src/idempotency.ts for exactly what you give up.
+  //
+  // "kv_namespaces": [{ "binding": "IDEMPOTENCY", "id": "<your-kv-id>" }]
+}

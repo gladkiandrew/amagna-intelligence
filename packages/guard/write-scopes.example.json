@@ -1,0 +1,8 @@
+{
+  "_comment": "Per-agent write-scope allowlist, enforced by the PreToolUse hook in src/cli.ts. An agent NOT listed here is unrestricted — listing it is what opts it in. Patterns: absolute, or ~/ for home; a trailing /** means this directory and everything under it; anything else is an exact file match. Keep this in sync with each charter's memory_writes: the charter is the claim, this file is the enforcement, and they drift silently if you only edit one.",
+  "agents": {
+    "atlas": ["~/demo-vault/briefs/**", "~/demo-vault/inbox/**"],
+    "scribe": ["~/demo-vault/drafts/**"],
+    "ledger": ["~/demo-vault/notes/**", "~/demo-vault/retros/**"]
+  }
+}

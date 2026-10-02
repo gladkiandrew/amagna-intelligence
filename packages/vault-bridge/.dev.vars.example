@@ -1,0 +1,4 @@
+# Copy to .dev.vars (gitignored) for `wrangler dev`.
+# Production values are set with `wrangler secret put <NAME>` — never in wrangler.jsonc.
+BRIDGE_TOKEN=replace-with-long-random-hex
+GITHUB_TOKEN=replace-with-a-fine-grained-pat-scoped-to-one-repo

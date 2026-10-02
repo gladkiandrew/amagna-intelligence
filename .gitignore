@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Environment — never commit
+.env
+.env.*
+!.env.example
+*.local
+*.local.*
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Local-only working notes (inventory of the private systems this repo was
+# sanitized from — it names real infrastructure and must never be published)
+INVENTORY.md
+
+# Cloudflare / Wrangler
+.wrangler/
+
+# Test + coverage output
+coverage/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp

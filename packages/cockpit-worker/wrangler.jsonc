@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cockpit-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-12-30",
+  "observability": { "enabled": true },
+
+  "vars": {
+    // Comma-separated Telegram chat IDs allowed to use this bot. There is no
+    // default and no wildcard: an empty allowlist rejects everyone, which is the
+    // correct failure mode for a bot whose username is public.
+    "ALLOWED_CHAT_IDS": "",
+    // Where /note sends captures. Point this at your vault-bridge deployment.
+    "BRIDGE_URL": "https://vault-bridge.example.workers.dev",
+  },
+
+  // Secrets, set out of band:
+  //   wrangler secret put TELEGRAM_BOT_TOKEN
+  //   wrangler secret put TELEGRAM_WEBHOOK_SECRET
+  //   wrangler secret put BRIDGE_TOKEN
+  //
+  // Register the webhook (the secret token is what proves a POST came from Telegram):
+  //   curl -X POST "https://api.telegram.org/bot$TOKEN/setWebhook" \
+  //     -d "url=https://cockpit-worker.<subdomain>.workers.dev/telegram" \
+  //     -d "secret_token=$TELEGRAM_WEBHOOK_SECRET"
+}

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+examples/demo-vault/
+INVENTORY.md
+examples/deal-screener/fixtures/expected-memo.md
+scripts/fixtures/
+charters/
+docs/
+*.md
