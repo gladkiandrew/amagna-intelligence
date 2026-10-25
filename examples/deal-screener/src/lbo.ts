@@ -64,6 +64,11 @@ export function paperLbo(
 
   const years: LboYear[] = [];
   let debt = entryDebt;
+  // Free cash flow left over once the debt is gone sits on the balance sheet and
+  // belongs to equity at exit. Dropping it would make every low-leverage, cash-
+  // generative deal look identical, because the return would stop depending on
+  // how much cash the business actually throws off.
+  let cash = 0;
   let revenue = teaser.revenue;
   let ebitda = buyerAdjustedEbitda;
 
@@ -97,13 +102,14 @@ export function paperLbo(
       row.ebitda - row.interest - row.cashTaxes - row.capex - row.workingCapitalOutflow;
     const debtRepaid = Math.max(0, Math.min(round(debt), freeCashFlow));
     debt = round(debt) - debtRepaid;
+    cash += freeCashFlow - debtRepaid;
 
     years.push({ ...row, freeCashFlow, debtRepaid, closingDebt: debt });
   }
 
   const exitEbitda = ebitda;
   const exitEnterpriseValue = exitEbitda * assumptions.exitMultiple;
-  const exitEquity = exitEnterpriseValue - debt;
+  const exitEquity = exitEnterpriseValue - debt + cash;
   const moic = entryEquity === 0 ? 0 : exitEquity / entryEquity;
   const irr = moic <= 0 ? -1 : moic ** (1 / assumptions.holdYears) - 1;
 
@@ -118,6 +124,7 @@ export function paperLbo(
     exitEbitda: round(exitEbitda),
     exitEnterpriseValue: round(exitEnterpriseValue),
     exitDebt: round(debt),
+    exitCash: round(cash),
     exitEquity: round(exitEquity),
     moic: Math.round(moic * 100) / 100,
     irr: Math.round(irr * 10_000) / 10_000,

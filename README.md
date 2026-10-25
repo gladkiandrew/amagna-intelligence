@@ -115,8 +115,9 @@ proprietary part. The three in `charters/examples/` were written fresh for this 
 **Written fresh for this repo.** `packages/cockpit-worker` — the live cockpit is a
 relay on a VPS, not a Cloudflare Worker, so this is a different implementation of the
 same discipline rather than a port. And `examples/deal-screener` doesn't exist in the
-original at all; it's here to show the deterministic-math/model-narrative split on a
-domain that isn't marketing.
+original at all. I built it while teaching myself how private-equity deal teams screen
+companies, to apply the deterministic-math/model-narrative split on a domain that isn't
+marketing. Every company, customer and figure in it is fictional.
 
 **Not here, and won't be.** Production charters. Client names and data. Real account
 IDs, zone IDs, bucket names, routes, tokens. The CRM and analytics ingestion plugins.
@@ -161,9 +162,10 @@ blocked path-traversal attempt) → screen a deal.
 Other commands:
 
 ```bash
-npm test          # 223 tests
+npm test          # 244 tests
 npm run verify    # lint + typecheck + test
 npm run screen    # print the full deal-screener memo
+npm run pipeline  # screen and rank five fictional teasers against a mandate
 ```
 
 To run the agent stages against a real model, set `ANTHROPIC_API_KEY`. Nothing else
@@ -172,6 +174,26 @@ changes — mock mode is a transport swap, not a code path threaded through the 
 ---
 
 ## The deal screener
+
+**Why I built it.** I was learning how private-equity business development works:
+how a deal team reads a teaser, normalises EBITDA, sizes a paper LBO and decides in
+minutes whether a company deserves a call. My thesis is that AI belongs on that front
+end of the funnel, doing the reading and the arithmetic so people spend their time on
+judgement and relationships. So I built the screen I was learning to do by hand. It has
+not been run on a real deal; every company and number below is fictional.
+
+**Where it applies.** The same workflow sits at the top of the funnel for:
+
+- **Lower-middle-market PE funds and their BD teams** triaging inbound banker teasers
+- **Search funds** reading dozens of small businesses to buy one
+- **Independent sponsors** who must justify every add-back to a capital partner
+- **Private credit lenders** sizing debt off normalised EBITDA
+- **M&A advisors and family offices** pressure-testing a seller's adjusted figures
+  before going to market
+
+Each of those buyers believes different add-backs and pays different multiples, which
+is why the thresholds, multiples, LBO assumptions and add-back policy now live in a
+[mandate file](examples/deal-screener/mandates) rather than in code.
 
 A worked example on a domain with real stakes for getting numbers wrong. It takes a
 teaser — fictional "Project Palm", $18m revenue, $2.4m reported EBITDA — and produces
@@ -226,6 +248,42 @@ And the model-written paragraph, from the keyless run:
 > largest (Harbour Point REIT) · 55.0% top five — which would move the deal either to
 > a straight pursue or to a structured bid depending on what the contracts say.
 
+The memo also reruns the paper LBO one turn and four points either side of the base
+case, so the 18.1% sits in the middle of a grid instead of standing alone:
+
+```
+| Entry \ Exit | 5.0x          | 6.0x          | 7.0x          |
+| 5.0x         | 21.9% (2.69x) | 26.2% (3.20x) | 30.1% (3.72x) |
+| 6.0x         | 13.8% (1.91x) | 18.1% (2.30x) | 21.9% (2.69x) |
+| 7.0x         | 7.6% (1.44x)  | 11.6% (1.73x) | 15.2% (2.03x) |
+```
+
+### Beyond one memo
+
+- **Mandates.** Three example buyers in [`mandates/`](examples/deal-screener/mandates):
+  lower-middle-market PE, a search fund, and an independent sponsor. Run Project Palm
+  through the search-fund mandate and it goes from "pursue with diligence" to "pass":
+  a 21% customer is manageable for a fund with a portfolio and fatal for someone buying
+  one company, and owner pay is only half an add-back when the buyer becomes the CEO.
+- **Text teasers with citations.** [`src/extract.ts`](examples/deal-screener/src/extract.ts)
+  reads a teaser typed up as plain text and cites every figure to its source line. A
+  field is either found on a labelled line or reported missing; nothing is inferred or
+  defaulted, because extraction is where a quietly wrong number does the most damage.
+- **Pipeline ranking.** `npm run pipeline` screens a folder of teasers against one
+  mandate and ranks them, which is the part of screening that actually eats a deal
+  team's week:
+
+| # | Company | Revenue | Buyer-adj. EBITDA | Ask on buyer-adj. | IRR | Call | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | Project Summit | $16.8m | $3.2m (19.2%) | 7.4x | 18.5% | Pursue | All checks clear |
+| 2 | Project Palm | $18.0m | $3.0m (16.6%) | 7.1x | 18.1% | Diligence | Customer concentration watch |
+| 3 | Project Birch | $11.4m | $2.0m (17.6%) | 6.2x | 17.4% | Diligence | Growth watch, Recurring revenue watch |
+| 4 | Project Cedar | $14.6m | $2.5m (16.8%) | 7.0x | 17.7% | Pass | Customer concentration fail |
+| 5 | Project Ember | $22.0m | $1.6m (7.0%) | 7.5x | 17.1% | Pass | Growth watch, Margin fail |
+
+All five companies are fictional. Both the memo and the ranked pipeline are committed
+as expected output and compared byte for byte in CI.
+
 Full memo: `npm run screen`. Policy table with the reasoning attached:
 [`src/adjustments.ts`](examples/deal-screener/src/adjustments.ts). The thinking behind
 the split: [ADR 7](docs/decisions/0007-deterministic-math-model-narrative.md).
@@ -258,7 +316,7 @@ Anthropic API (`claude-opus-5`, adaptive thinking, prompt caching, server-side r
 fallbacks) · Telegram Bot API · GitHub Contents API · Vitest · npm workspaces ·
 GitHub Actions with gitleaks
 
-223 tests. No mocking framework — dependencies are injected at the seams (transport,
+244 tests. No mocking framework — dependencies are injected at the seams (transport,
 `fetch`, clock, GitHub client), which is most of why the suite runs in under a second.
 
 ---
@@ -271,6 +329,9 @@ GitHub Actions with gitleaks
   as a runnable package — a claim extractor that gates output against a fact file.
 - A runnable eval harness for charters, with the held-back split from
   [ADR 6](docs/decisions/0006-held-back-evals.md) enforced by the loader.
+- Model-assisted extraction from a CIM PDF for the deal screener, where the model may
+  only propose a figure together with the exact quote it came from, and the quote is
+  checked against the document before the number is accepted.
 - A `signal`-style analytics charter and its deterministic metrics layer, as a second
   worked example alongside the deal screener.
 

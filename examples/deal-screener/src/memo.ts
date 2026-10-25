@@ -2,6 +2,7 @@ import { DEFAULT_ASSUMPTIONS, type LboAssumptions } from './lbo.js';
 import { formatExact, formatMoney, formatMultiple, formatPercent } from './format.js';
 import { revenueCagr } from './checks.js';
 import type { Recommendation, Screen, Verdict } from './model.js';
+import { renderGrid, sensitivity } from './sensitivity.js';
 
 const STATUS_MARK = { pass: 'PASS', watch: 'WATCH', fail: 'FAIL' } as const;
 const VERDICT_MARK: Record<Verdict, string> = {
@@ -166,7 +167,7 @@ export function renderMemo(result: Screen, options: MemoOptions = {}): string {
   push('');
   push(
     `Exit EBITDA ${formatMoney(lbo.exitEbitda)} × ${formatMultiple(lbo.exitMultiple)} = ${formatMoney(lbo.exitEnterpriseValue)}, ` +
-      `less ${formatMoney(lbo.exitDebt)} of remaining debt = **${formatMoney(lbo.exitEquity)}** of equity.`,
+      `less ${formatMoney(lbo.exitDebt)} of remaining debt${lbo.exitCash > 0 ? `, plus ${formatMoney(lbo.exitCash)} of cash built up after the debt was repaid,` : ''} = **${formatMoney(lbo.exitEquity)}** of equity.`,
   );
   push('');
   push(
@@ -187,6 +188,18 @@ export function renderMemo(result: Screen, options: MemoOptions = {}): string {
   push(
     '- Exit at the entry multiple: the return comes from deleveraging and growth, not from re-rating',
   );
+  push('');
+
+  push('## Sensitivity');
+  push('');
+  push(
+    'The same paper LBO rerun one turn and four points either side of the base case, which sits in the middle cell of each table.',
+  );
+  push('');
+  const grids = sensitivity(teaser, valuation.buyerAdjustedEbitda, assumptions);
+  push(...renderGrid(grids.entryExit));
+  push('');
+  push(...renderGrid(grids.leverageGrowth));
   push('');
 
   push('## Diligence priorities');

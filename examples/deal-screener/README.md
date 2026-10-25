@@ -6,9 +6,31 @@ TypeScript; the model writes one paragraph.**
 ```bash
 npm run screen                                   # the bundled Project Palm teaser
 npm run screen -- ./path/to/your-teaser.json     # your own
+npm run pipeline                                 # rank five fictional teasers
+npm run pipeline -- --mandate examples/deal-screener/mandates/search-fund.json
 ```
 
-Fictional input: "Project Palm", $18m revenue, $2.4m reported EBITDA.
+**Every company, customer and figure in this folder is fictional.** It is a worked
+example, not a record of real deals.
+
+## Why I built it
+
+I built this while learning how private-equity deal teams screen companies: reading a
+teaser, normalising EBITDA, sizing a paper LBO, and deciding quickly whether a business
+deserves a call. My view is that AI is most useful at that front end of the funnel,
+doing the reading and arithmetic so the team's time goes to judgement and
+relationships. Building the screen was how I learned to do it by hand.
+
+## Where it applies
+
+| Who | How they'd use it |
+|---|---|
+| Lower-middle-market PE funds | Triage inbound banker teasers against the fund's mandate before anyone books a call |
+| Search funds | Screen dozens of small businesses quickly with tighter size and concentration limits |
+| Independent sponsors | Show a capital partner exactly which add-backs survive and why |
+| Private credit lenders | Size debt off buyer-adjusted EBITDA, not the seller's figure |
+| M&A advisors, family offices | Pressure-test a seller's adjusted EBITDA before it goes to market |
+
 
 ## What it does
 
@@ -60,6 +82,45 @@ is compared byte for byte in CI — and why formatting avoids `Intl.NumberFormat
 output varies with the ICU data in the running Node build.
 
 Full reasoning: [ADR 7](../../docs/decisions/0007-deterministic-math-model-narrative.md).
+
+## Mandates
+
+A mandate is a buyer's judgement written down: size floors, growth and margin bars,
+concentration limits, the valuation range, LBO assumptions, and which add-backs it
+believes. Three are bundled in [`mandates/`](mandates):
+
+- **Lower-middle-market PE**: the defaults, written out.
+- **Search fund**: smaller floors, lower multiples, tighter concentration limits, and
+  owner pay credited at half, because the searcher becomes the CEO.
+- **Independent sponsor**: undocumented add-backs credited at zero and run-rate claims
+  cut to a quarter, because each one has to survive a capital partner's diligence.
+
+Any field left out inherits the default, and unknown settings are rejected rather than
+ignored. Project Palm is "pursue with diligence" under the PE mandate and "pass" under
+the search-fund one, for reasons the memo prints.
+
+## Sensitivity
+
+The memo reruns the same paper LBO across entry × exit multiple and leverage × EBITDA
+growth, with the base case in the centre cell. When an assumption silently binds (the
+leverage cap at 55% of EV, for example), the table says so instead of printing a row
+that means something other than its label.
+
+## Text teasers, with citations
+
+[`src/extract.ts`](src/extract.ts) reads a teaser typed up as plain text (see
+[`fixtures/pipeline/*.md`](fixtures/pipeline)) and returns the teaser plus a citation
+for every figure: the line number and the exact source text. A field is either found on
+a labelled line or reported as missing; nothing is inferred or defaulted. An unreadable
+figure ("roughly $5m") is an error on its line, not a skipped line.
+
+## Pipeline
+
+[`src/pipeline.ts`](src/pipeline.ts) screens a folder of teasers against one mandate and
+ranks them: pursue, then diligence, then pass, and by base-case IRR within each group.
+The ranked table is committed as
+[`fixtures/pipeline/expected-pipeline.md`](fixtures/pipeline/expected-pipeline.md) and
+compared byte for byte in CI.
 
 ## Teaser format
 

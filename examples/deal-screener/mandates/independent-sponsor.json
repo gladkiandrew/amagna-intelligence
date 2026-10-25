@@ -1,0 +1,17 @@
+{
+  "name": "Independent sponsor",
+  "description": "A dealmaker without a committed fund who has to raise equity deal by deal. Every add-back has to survive a capital partner's diligence, so anything undocumented is credited at zero and run-rate claims are cut harder.",
+  "policy": {
+    "owner-compensation": { "undocumentedHaircut": 0 },
+    "one-time": {
+      "undocumentedHaircut": 0,
+      "rationale": "An undocumented one-time cost will not survive the capital partner's quality-of-earnings review, so it is credited at zero until it is evidenced."
+    },
+    "run-rate-new-contract": {
+      "documentedHaircut": 0.25,
+      "undocumentedHaircut": 0,
+      "rationale": "Capital partners price what has been delivered, not what has been signed. Credited at a quarter with a signed contract, zero without."
+    }
+  },
+  "assumptions": { "transactionFeeShareOfEv": 0.035 }
+}

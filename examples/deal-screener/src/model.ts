@@ -119,6 +119,8 @@ export interface LboResult {
   exitEbitda: number;
   exitEnterpriseValue: number;
   exitDebt: number;
+  /** Cash accumulated after the debt is fully repaid. Counted in exit equity. */
+  exitCash: number;
   exitEquity: number;
   moic: number;
   /** Annualised, as a decimal (0.21 = 21%). */

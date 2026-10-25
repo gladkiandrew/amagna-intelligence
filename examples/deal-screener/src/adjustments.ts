@@ -1,6 +1,6 @@
 import type { Adjustment, AdjustmentCategory, ReviewedAdjustment, Verdict } from './model.js';
 
-interface Policy {
+export interface Policy {
   /** Credited fraction when the seller provided support. */
   documentedHaircut: number;
   /** Credited fraction when they did not. */
@@ -29,7 +29,9 @@ interface Policy {
  *   pay. Restating it down is not pessimism; it is the same discipline applied in
  *   the direction that costs the seller money.
  */
-const POLICY: Record<AdjustmentCategory, Policy> = {
+export type AddBackPolicy = Record<AdjustmentCategory, Policy>;
+
+const POLICY: AddBackPolicy = {
   'owner-compensation': {
     documentedHaircut: 1,
     undocumentedHaircut: 0.5,
@@ -74,9 +76,12 @@ const POLICY: Record<AdjustmentCategory, Policy> = {
   },
 };
 
-export function reviewAdjustments(adjustments: Adjustment[]): ReviewedAdjustment[] {
+export function reviewAdjustments(
+  adjustments: Adjustment[],
+  policyTable: AddBackPolicy = POLICY,
+): ReviewedAdjustment[] {
   return adjustments.map((adjustment) => {
-    const policy = POLICY[adjustment.category];
+    const policy = policyTable[adjustment.category];
     const haircut = adjustment.documented ? policy.documentedHaircut : policy.undocumentedHaircut;
     const credited = round2(adjustment.amount * haircut);
     return {

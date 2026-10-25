@@ -15,6 +15,7 @@
   "scripts": {
     "demo": "tsx scripts/demo.ts",
     "screen": "tsx examples/deal-screener/src/cli.ts",
+    "pipeline": "tsx examples/deal-screener/src/pipeline-cli.ts",
     "build": "tsc --build",
     "test": "vitest run",
     "test:watch": "vitest",

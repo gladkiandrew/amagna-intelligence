@@ -84,6 +84,28 @@ Assumptions, so you can disagree with them:
 - 25.0% cash tax, D&A proxied by maintenance capex at 2.0% of revenue
 - Exit at the entry multiple: the return comes from deleveraging and growth, not from re-rating
 
+## Sensitivity
+
+The same paper LBO rerun one turn and four points either side of the base case, which sits in the middle cell of each table.
+
+**Entry multiple vs. exit multiple** — IRR (MOIC)
+
+| Entry \ Exit | 5.0x | 6.0x | 7.0x |
+|---|---|---|---|
+| 5.0x | 21.9% (2.69x) | 26.2% (3.20x) | 30.1% (3.72x) |
+| 6.0x | 13.8% (1.91x) | 18.1% (2.30x) | 21.9% (2.69x) |
+| 7.0x | 7.6% (1.44x) | 11.6% (1.73x) | 15.2% (2.03x) |
+
+**Leverage vs. annual EBITDA growth** — IRR (MOIC)
+
+| Leverage \ Growth | 0.0% | 4.0% | 8.0% |
+|---|---|---|---|
+| 2.0x | 11.1% (1.69x) | 15.7% (2.08x) | 20.3% (2.52x) |
+| 3.0x | 12.3% (1.79x) | 18.1% (2.30x) | 23.7% (2.89x) |
+| 4.0x | 12.8% (1.83x) | 19.1% (2.40x) | 25.0% (3.05x) |
+
+*Debt is still capped at 55.0% of enterprise value, so rows above 3.3x are borrowing 3.3x, not what the row says.*
+
 ## Diligence priorities
 
 - Customer concentration: Watch the largest account — understand contract term and renewal history before bidding.

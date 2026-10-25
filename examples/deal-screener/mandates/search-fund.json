@@ -1,0 +1,31 @@
+{
+  "name": "Search fund",
+  "description": "One searcher, investor-backed, buying a single small business to run. Smaller floors, lower multiples, heavier SBA-style leverage, and less tolerance for revenue concentration because there is no portfolio to absorb a lost customer.",
+  "thresholds": {
+    "minRevenue": 3000000,
+    "minEbitda": 750000,
+    "minRevenueCagr": 0.03,
+    "watchRevenueCagr": 0.0,
+    "minEbitdaMargin": 0.15,
+    "watchEbitdaMargin": 0.1,
+    "maxSingleCustomerShare": 0.15,
+    "watchSingleCustomerShare": 0.1,
+    "maxTopFiveShare": 0.45
+  },
+  "lowMultiple": 3.5,
+  "highMultiple": 5.5,
+  "assumptions": {
+    "entryMultiple": 4.5,
+    "exitMultiple": 4.5,
+    "holdYears": 6,
+    "leverageTurns": 3,
+    "maxLeverageShareOfEv": 0.7,
+    "interestRate": 0.105
+  },
+  "policy": {
+    "owner-compensation": {
+      "documentedHaircut": 0.5,
+      "rationale": "The searcher becomes the CEO and draws a salary. Only the gap between the owner's pay and the searcher's own salary is a real add-back, so this is credited at half."
+    }
+  }
+}

@@ -1,4 +1,10 @@
-import { claimedTotal, creditedTotal, reviewAdjustments } from './adjustments.js';
+import {
+  ADD_BACK_POLICY,
+  claimedTotal,
+  creditedTotal,
+  reviewAdjustments,
+  type AddBackPolicy,
+} from './adjustments.js';
 import { DEFAULT_THRESHOLDS, recommend, runChecks, type Thresholds } from './checks.js';
 import { DEFAULT_ASSUMPTIONS, paperLbo, type LboAssumptions } from './lbo.js';
 import type { Screen, Teaser, Valuation } from './model.js';
@@ -8,6 +14,8 @@ export interface ScreenOptions {
   assumptions?: LboAssumptions;
   lowMultiple?: number;
   highMultiple?: number;
+  /** The add-back policy. A mandate can be stricter or looser than the default. */
+  policy?: AddBackPolicy;
 }
 
 export const DEFAULT_LOW_MULTIPLE = 5;
@@ -27,7 +35,7 @@ export function screen(teaser: Teaser, options: ScreenOptions = {}): Screen {
   const lowMultiple = options.lowMultiple ?? DEFAULT_LOW_MULTIPLE;
   const highMultiple = options.highMultiple ?? DEFAULT_HIGH_MULTIPLE;
 
-  const adjustments = reviewAdjustments(teaser.adjustments);
+  const adjustments = reviewAdjustments(teaser.adjustments, options.policy ?? ADD_BACK_POLICY);
   const buyerAdjustedEbitda = round2(teaser.reportedEbitda + creditedTotal(adjustments));
   const sellerAdjustedEbitda = round2(teaser.reportedEbitda + claimedTotal(adjustments));
 
