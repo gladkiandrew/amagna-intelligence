@@ -287,7 +287,7 @@ GitHub Actions with gitleaks
 
 Andrew Gladki — built and operated the original system end to end.
 
-- LinkedIn: `linkedin.com/in/<your-handle>`
+- LinkedIn: [linkedin.com/in/andrewgladki](https://www.linkedin.com/in/andrewgladki/)
 - Email: [andrewgladki@outlook.com](mailto:andrewgladki@outlook.com)
 
 MIT licensed. Happy to talk about any of it, including the parts that didn't work.
