@@ -1,5 +1,7 @@
 # amagna-intelligence
 
+[![ci](https://github.com/gladkiandrew/amagna-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/gladkiandrew/amagna-intelligence/actions/workflows/ci.yml)
+
 **A reference architecture for running an AI-native operation: markdown memory,
 chartered agents, and a chat cockpit on Cloudflare.**
 
@@ -274,11 +276,18 @@ GitHub Actions with gitleaks
 
 ---
 
+## Related
+
+- [`armm`](https://github.com/gladkiandrew/armm): my risk-first crypto futures execution engine. Deterministic guards, a demo-locked autopilot, 281 offline tests, safety invariants proven in CI.
+- [`agent-os`](https://github.com/gladkiandrew/agent-os): the fail-closed governance layer for a crew of agents, as a small Python package. Charters, write scopes, human approval for spend and outbound, budgets, an activity feed.
+
+---
+
 ## Contact
 
 Andrew Gladki — built and operated the original system end to end.
 
 - LinkedIn: `linkedin.com/in/<your-handle>`
-- Email: `you@example.com`
+- Email: [andrewgladki@outlook.com](mailto:andrewgladki@outlook.com)
 
 MIT licensed. Happy to talk about any of it, including the parts that didn't work.
