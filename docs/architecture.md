@@ -20,7 +20,7 @@ flowchart TB
         vault[("markdown vault<br/>git repository<br/>YAML frontmatter")]
     end
 
-    api["Anthropic API<br/>claude-opus-5"]
+    api["any model<br/>Claude · GPT · Grok · open-weight"]
     charters[["charters/*.md<br/>contract + prompt"]]
 
     operator(["operator"]) -->|phone| cockpit

@@ -65,7 +65,7 @@ function stub(agent: string, request: LlmRequest): string {
     '',
     `Task: ${truncate(request.userMessage, 240)}`,
     '',
-    'Set `ANTHROPIC_API_KEY` to run this for real.',
+    'Set `LLM_PROVIDER` (anthropic, openai, xai, ollama, command, …) and `LLM_MODEL` to run this for real.',
   ].join('\n');
 }
 

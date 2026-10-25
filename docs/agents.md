@@ -117,8 +117,11 @@ A missing fixture is deliberately not an error. An unfixtured task still demonst
 routing and recall instead of breaking the demo, and the output says `[MOCK]` so
 nobody mistakes it for model output.
 
-Live mode activates when `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or
-`ANTHROPIC_PROFILE` is set. `MOCK=1` forces mock regardless.
+Live mode activates when a model is configured: `LLM_PROVIDER` (anthropic, openai,
+xai, openrouter, ollama, openai-compatible, or command) plus `LLM_MODEL`, or, for
+backwards compatibility, an Anthropic credential on its own. `MOCK=1` forces mock
+regardless. The runner never knows which vendor answered; see
+`packages/agents/src/provider.ts`.
 
 ## The two sketched roles
 

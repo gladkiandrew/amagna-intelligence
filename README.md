@@ -34,7 +34,7 @@ flowchart TB
     end
 
     vault[("markdown vault<br/>git repository<br/>the only record")]
-    api["Anthropic API<br/>claude-opus-5"]
+    api["any model<br/>Claude · GPT · Grok · open-weight"]
     charters[["charters/*.md<br/>contract + prompt"]]
 
     operator(["operator"]) -->|phone| cockpit
@@ -56,7 +56,7 @@ lives.**
 | Package | What it does |
 |---|---|
 | [`packages/memory`](packages/memory) | Loads a folder of markdown notes, indexes them, searches with IDF + recency decay, writes back without disturbing frontmatter. |
-| [`packages/agents`](packages/agents) | Parses charters, routes tasks by declared capability, runs one bounded call against the Anthropic API. Mock mode by default. |
+| [`packages/agents`](packages/agents) | Parses charters, routes tasks by declared capability, runs one bounded call against any model — Claude, GPT, Grok, an open-weight model, or a subscription CLI. Mock mode by default. |
 | [`packages/guard`](packages/guard) | A `PreToolUse` hook that turns each charter's declared write scope into an enforced one. Exit 2 blocks the write. |
 | [`packages/vault-bridge`](packages/vault-bridge) | Cloudflare Worker that commits notes to a Git-backed vault, with compare-and-swap against concurrent writers. |
 | [`packages/cockpit-worker`](packages/cockpit-worker) | Cloudflare Worker: Telegram webhook, secret-token auth, chat allowlist, three commands. |
@@ -162,14 +162,28 @@ blocked path-traversal attempt) → screen a deal.
 Other commands:
 
 ```bash
-npm test          # 244 tests
+npm test          # 258 tests
 npm run verify    # lint + typecheck + test
 npm run screen    # print the full deal-screener memo
 npm run pipeline  # screen and rank five fictional teasers against a mandate
 ```
 
-To run the agent stages against a real model, set `ANTHROPIC_API_KEY`. Nothing else
-changes — mock mode is a transport swap, not a code path threaded through the logic.
+### Bring your own model
+
+Nothing here is tied to one vendor. Set `LLM_PROVIDER` and `LLM_MODEL` and the agent
+stages run against it. Nothing else changes, because the model is a transport swap,
+not a code path threaded through the logic.
+
+| `LLM_PROVIDER` | What it runs | Credential |
+|---|---|---|
+| `anthropic` | Claude, via the Anthropic API | `ANTHROPIC_API_KEY` or an `ant auth login` profile |
+| `openai` · `xai` · `openrouter` | GPT, Grok, or anything on OpenRouter | `OPENAI_API_KEY` · `XAI_API_KEY` · `OPENROUTER_API_KEY` |
+| `ollama` | a local open-weight model | none |
+| `openai-compatible` | any `/chat/completions` server (vLLM, LM Studio, …) via `LLM_BASE_URL` | `LLM_API_KEY` if it needs one |
+| `command` | any CLI that reads a prompt on stdin, e.g. `LLM_COMMAND="claude -p"` | whatever the CLI uses: a subscription works, no API key |
+
+I run my own crew through Claude Code on a Claude Max subscription, which is the
+`command` path: no per-call API key. The full list is in [`.env.example`](.env.example).
 
 ---
 
@@ -312,11 +326,11 @@ the split: [ADR 7](docs/decisions/0007-deterministic-math-model-narrative.md).
 ## Tech stack
 
 TypeScript (strict, `noUncheckedIndexedAccess`) · Cloudflare Workers + Wrangler ·
-Anthropic API (`claude-opus-5`, adaptive thinking, prompt caching, server-side refusal
-fallbacks) · Telegram Bot API · GitHub Contents API · Vitest · npm workspaces ·
+model-agnostic transports (Anthropic, OpenAI-compatible: OpenAI · xAI Grok · OpenRouter ·
+Ollama · vLLM, and any CLI such as Claude Code on a subscription) · Telegram Bot API · GitHub Contents API · Vitest · npm workspaces ·
 GitHub Actions with gitleaks
 
-244 tests. No mocking framework — dependencies are injected at the seams (transport,
+258 tests. No mocking framework — dependencies are injected at the seams (transport,
 `fetch`, clock, GitHub client), which is most of why the suite runs in under a second.
 
 ---

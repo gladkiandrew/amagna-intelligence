@@ -1,4 +1,4 @@
-import { parseCharter, run, type LlmTransport } from '@amagna/agents';
+import { parseCharter, resolveMode, run, type LlmTransport } from '@amagna/agents';
 import { formatExact, formatMoney, formatMultiple, formatPercent } from './format.js';
 import type { Screen } from './model.js';
 
@@ -12,7 +12,7 @@ import type { Screen } from './model.js';
  * handed a finished, computed screen and asked to interpret it — it never derives
  * a figure, and the memo labels which paragraph it wrote.
  *
- * In mock mode (the default, with no API key) the paragraph is composed from the
+ * In mock mode (the default, with no model configured) the paragraph is composed from the
  * same computed facts, so the demo produces a complete memo with no spend and no
  * pretence that a model was involved.
  */
@@ -104,9 +104,8 @@ function hasCredential(
   options: NarrativeOptions,
   env: Record<string, string | undefined>,
 ): boolean {
-  return (
-    Boolean(options.apiKey ?? env.ANTHROPIC_API_KEY ?? env.ANTHROPIC_AUTH_TOKEN) && env.MOCK !== '1'
-  );
+  // Any configured provider counts (LLM_PROVIDER, or an Anthropic credential).
+  return resolveMode(options.apiKey ? { apiKey: options.apiKey } : {}, env) === 'live';
 }
 
 /**

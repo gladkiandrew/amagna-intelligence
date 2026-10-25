@@ -198,5 +198,5 @@ console.log(`\n   Full memo: ${memo.split('\n').length} lines. Print it with: np
 
 console.log(`\n${RULE}`);
 console.log(' Done. Nothing above called a network or read a credential.');
-console.log(' Set ANTHROPIC_API_KEY to run stages 5 and 7 against a real model.');
+console.log(' Set LLM_PROVIDER + LLM_MODEL to run stages 5 and 7 against any real model.');
 console.log(`${RULE}\n`);

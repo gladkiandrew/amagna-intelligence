@@ -43,8 +43,11 @@ jobs:
       - name: Demo runs keyless
         run: npm run demo
         env:
+          LLM_PROVIDER: ''
           ANTHROPIC_API_KEY: ''
           ANTHROPIC_AUTH_TOKEN: ''
+          OPENAI_API_KEY: ''
+          XAI_API_KEY: ''
 
   secrets:
     runs-on: ubuntu-latest

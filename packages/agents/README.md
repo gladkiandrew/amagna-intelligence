@@ -18,8 +18,8 @@ console.log(result.mode, result.cited);       // 'mock' | 'live', notes injected
 
 ## Mock mode is the default
 
-With no credential present (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, or
-`ANTHROPIC_PROFILE`), `run()` uses a mock transport: a recorded fixture at
+With no model configured (no `LLM_PROVIDER`, and no Anthropic credential), `run()`
+uses a mock transport: a recorded fixture at
 `<fixturesDir>/<agent>/<name>.md`, or a clearly labelled `[MOCK]` stub reporting which
 notes were retrieved. A missing fixture is not an error — an unfixtured task still
 demonstrates routing and recall rather than breaking the demo. `MOCK=1` forces it.
@@ -58,7 +58,10 @@ crew with two coordinators — with two, "where does unrouted work go?" has no a
 | `route(task, crew)` | Scored decision with every candidate and its reasons. |
 | `run(charter, task, opts)` | Recall → prompt → one call → result. Never writes. |
 | `buildPrompt(charter, hits)` | The cache-split prompt, if you want it directly. |
-| `createAnthropicTransport` | The live transport. Holds every SDK-specific detail. |
+| `resolveProvider(opts, env)` | Picks the model from config: `LLM_PROVIDER` + `LLM_MODEL`. |
+| `createAnthropicTransport` | Claude via the Anthropic API. Holds every Anthropic-specific detail. |
+| `createOpenAICompatibleTransport` | OpenAI, xAI Grok, OpenRouter, Ollama, vLLM, LM Studio — one `fetch`-based adapter. |
+| `createCommandTransport` | Any CLI that reads a prompt on stdin, e.g. `claude -p` on a subscription. |
 | `createMockTransport` | Fixture-backed transport. |
 | `resolveMode(opts, env)` | The keyless-by-default decision, exposed for testing. |
 

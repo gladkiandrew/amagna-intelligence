@@ -1,9 +1,9 @@
 /**
  * `npm run screen -- [path-to-teaser.json]`
  *
- * Prints the memo to stdout. Runs keyless by default; set ANTHROPIC_API_KEY to
- * have a model write the investment-view paragraph instead of the deterministic
- * one.
+ * Prints the memo to stdout. Runs keyless by default; configure any model
+ * (LLM_PROVIDER + LLM_MODEL — Claude, GPT, Grok, an open-weight model, or a CLI) to
+ * have it write the investment-view paragraph instead of the deterministic one.
  */
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

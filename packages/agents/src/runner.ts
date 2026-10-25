@@ -1,11 +1,19 @@
 import { search, type MemoryIndex } from '@amagna/memory';
 import type { Charter } from './charter.js';
-import { createAnthropicTransport, type Effort, type LlmTransport } from './llm.js';
+import type { Effort, LlmTransport } from './llm.js';
 import { createMockTransport } from './mock.js';
+import {
+  ANTHROPIC_DEFAULT_MODEL,
+  createLiveTransport,
+  resolveModel,
+  resolveProvider,
+  type ProviderChoice,
+} from './provider.js';
 import { buildPrompt } from './prompt.js';
 import type { Task } from './router.js';
 
-export const DEFAULT_MODEL = 'claude-opus-5';
+/** Used only when the provider is Anthropic and no model is configured. */
+export const DEFAULT_MODEL = ANTHROPIC_DEFAULT_MODEL;
 export const DEFAULT_MAX_TOKENS = 16_000;
 export const DEFAULT_RECALL_LIMIT = 5;
 
@@ -17,8 +25,9 @@ export interface RunOptions {
   maxTokens?: number;
   effort?: Effort;
   /**
-   * Force a mode. Default: live when a credential is present, mock otherwise.
-   * `MOCK=1` in the environment also forces mock.
+   * Force a mode. Default: live when a provider is configured (`LLM_PROVIDER`, or
+   * an Anthropic credential for backwards compatibility), mock otherwise. `MOCK=1`
+   * in the environment also forces mock. See provider.ts.
    */
   mode?: 'mock' | 'live';
   apiKey?: string;
@@ -65,8 +74,17 @@ export async function run(
     : [];
 
   const prompt = buildPrompt(charter, hits);
-  const transport = options.transport ?? resolveTransport(charter, options, env);
-  const requestedModel = options.model ?? env.ANTHROPIC_MODEL ?? DEFAULT_MODEL;
+  let transport: LlmTransport;
+  let requestedModel: string;
+  if (options.transport) {
+    // Injected (tests, the demo): the caller owns the transport, so just label the model.
+    transport = options.transport;
+    requestedModel = options.model ?? env.LLM_MODEL ?? env.ANTHROPIC_MODEL ?? DEFAULT_MODEL;
+  } else {
+    const choice = resolveProvider(options, env);
+    requestedModel = resolveModel(choice, options.model, env);
+    transport = resolveTransport(charter, choice, requestedModel, options, env);
+  }
 
   const response = await transport.send({
     system: { stable: prompt.stable, volatile: prompt.volatile },
@@ -88,26 +106,24 @@ export async function run(
   };
 }
 
-/** Keyless by default: no credential and no explicit `mode: 'live'` means mock. */
+/** Keyless by default: no configured provider and no explicit `mode: 'live'` means mock. */
 export function resolveMode(
   options: Pick<RunOptions, 'mode' | 'apiKey'>,
   env: Record<string, string | undefined>,
 ): 'mock' | 'live' {
   if (options.mode) return options.mode;
-  if (env.MOCK === '1') return 'mock';
-  const hasCredential = Boolean(
-    options.apiKey ?? env.ANTHROPIC_API_KEY ?? env.ANTHROPIC_AUTH_TOKEN ?? env.ANTHROPIC_PROFILE,
-  );
-  return hasCredential ? 'live' : 'mock';
+  return resolveProvider(options, env).provider === 'mock' ? 'mock' : 'live';
 }
 
 function resolveTransport(
   charter: Charter,
+  choice: ProviderChoice,
+  model: string,
   options: RunOptions,
   env: Record<string, string | undefined>,
 ): LlmTransport {
-  if (resolveMode(options, env) === 'live') {
-    return createAnthropicTransport(options.apiKey ? { apiKey: options.apiKey } : {});
+  if (choice.provider !== 'mock') {
+    return createLiveTransport(choice, model);
   }
   return createMockTransport({
     fixturesDir: options.fixturesDir ?? env.AMAGNA_FIXTURES_DIR ?? 'fixtures',
